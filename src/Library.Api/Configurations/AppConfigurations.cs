@@ -7,7 +7,7 @@ namespace Library.Api.Configurations;
 
 public static class AppConfigurations
 {
-    public static WebApplication AddBuilderServices(this WebApplication app)
+    public static WebApplication AddSwaggerConfiguration(this WebApplication app)
     {
         app.UseSwagger();
         app.UseSwaggerUI();
