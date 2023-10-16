@@ -1,3 +1,4 @@
+using FluentValidation;
 using Library.Api.Configurations;
 using Library.Api.Model;
 using Library.Api.Services;
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddBuilderServices();
 builder.Services.AddDatabaseConfiguration(builder.Configuration);
 builder.Services.AddSingletonServices();
+builder.Services.AddValidators();
 
 
 var app = builder.Build();
@@ -17,8 +19,15 @@ app.AddSwaggerConfiguration();
 
 await app.AddDatabaseInitializerAysnc();
 
-app.MapPost("book", async (Book book, IBookService bookService) =>
+app.MapPost("book", async (Book book, IBookService bookService, IValidator<Book> validator) =>
 {
+    var validationResult = await validator.ValidateAsync(book);
+
+    if (!validationResult.IsValid)
+    {
+        return Results.BadRequest(validationResult.Errors);
+    }
+
     var created = await bookService.CreateAsync(book);
 
     if (!created)

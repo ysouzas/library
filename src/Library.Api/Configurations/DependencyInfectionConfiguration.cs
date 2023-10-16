@@ -8,6 +8,7 @@ public static class DependencyInfectionConfiguration
     public static IServiceCollection AddSingletonServices(this IServiceCollection services)
     {
         services.AddSingleton<IBookService, BookService>();
+
         return services;
     }
 }

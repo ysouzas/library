@@ -15,6 +15,7 @@ public class DatabaseInitializer
     public async Task InitializeAsync()
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
+       
         await connection.ExecuteAsync(@"CREATE TABLE IF NOT EXISTS Books(
             Isbn TEXT PRIMARY KEY,
             Title TEXT NOT NULL,
