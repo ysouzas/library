@@ -38,8 +38,15 @@ app.MapPost("book", async (Book book, IBookService bookService, IValidator<Book>
     return Results.Created($"/books/{book.ISBN}", book);
 });
 
-app.MapGet("books", async (IBookService bookService) =>
+app.MapGet("books", async (IBookService bookService, string? searchTerm) =>
 {
+    if (searchTerm is not null && !string.IsNullOrEmpty(searchTerm))
+    {
+        var matchedBookds = await bookService.SearchByTitleAsync(searchTerm);
+
+        return Results.Ok(matchedBookds);
+    }
+
     var books = await bookService.GetAllAsync();
 
     return Results.Ok(books);
