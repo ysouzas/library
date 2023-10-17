@@ -74,4 +74,11 @@ app.MapGet("books/{isbn}", async (string isbn, IBookService bookService) =>
     return book is not null ? Results.Ok(book) : Results.NotFound();
 });
 
+app.MapDelete("books/{isbn}", async (string isbn, IBookService bookService) =>
+{
+    var deleted = await bookService.DeleteAsync(isbn);
+
+    return deleted ? Results.NoContent() : Results.NotFound();
+});
+
 app.Run();
