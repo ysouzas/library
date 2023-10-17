@@ -38,9 +38,13 @@ public class BookService : IBookService
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Book>> GetAllAsync()
+    public async Task<IEnumerable<Book>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        using var connection = await _connectionFactory.CreateConnectionAsync();
+
+        var result = await connection.QueryAsync<Book>("SELECT * FROM Books");
+
+        return result;
     }
 
     public Task<Book?> GetByISBNAsync(string isbn)
