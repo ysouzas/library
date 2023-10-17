@@ -47,9 +47,13 @@ public class BookService : IBookService
         return result;
     }
 
-    public Task<Book?> GetByISBNAsync(string isbn)
+    public async Task<Book?> GetByISBNAsync(string isbn)
     {
-        return Task.FromResult<Book>(null);
+        using var connection = await _connectionFactory.CreateConnectionAsync();
+
+        var result = await connection.QuerySingleOrDefaultAsync<Book>("SELECT * FROM Books WHERE ISBN = @Isbn LIMIT 1", new { Isbn = isbn });
+
+        return result;
     }
 
     public Task<IEnumerable<Book>> SearchByTitleAsync(string title)

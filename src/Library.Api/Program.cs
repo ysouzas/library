@@ -45,5 +45,11 @@ app.MapGet("books", async (IBookService bookService) =>
     return Results.Ok(books);
 });
 
+app.MapGet("books/{isbn}", async (string isbn, IBookService bookService) =>
+{
+    var book = await bookService.GetByISBNAsync(isbn);
+
+    return book is not null ? Results.Ok(book) : Results.NotFound();
+});
 
 app.Run();
