@@ -33,11 +33,6 @@ public class BookService : IBookService
         return result > 0;
     }
 
-    public Task<bool> DeleteAsync(string isbn)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<IEnumerable<Book>> GetAllAsync()
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
@@ -65,7 +60,30 @@ public class BookService : IBookService
         return result;
     }
 
-    public Task<bool> UpdateAsync(Book book)
+    public async Task<bool> UpdateAsync(Book book)
+    {
+        var existingBook = await GetByISBNAsync(book.ISBN);
+
+        if (existingBook is null)
+        {
+            return false;
+        }
+
+        using var connection = await _connectionFactory.CreateConnectionAsync();
+
+        var result = await connection.ExecuteAsync(@"UPDATE Books SET
+                                                            ISBN = @ISBN,
+                                                            Title = @Title,
+                                                            Author = @Author,
+                                                            ShortDescription = @ShortDescription,
+                                                            PageCount = @PageCount,
+                                                            ReleaseDate = @ReleaseDate
+                                                            WHERE ISBN=@ISBN", book);
+
+        return result > 0;
+    }
+
+    public Task<bool> DeleteAsync(string isbn)
     {
         throw new NotImplementedException();
     }

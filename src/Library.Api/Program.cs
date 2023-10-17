@@ -12,7 +12,6 @@ builder.Services.AddDatabaseConfiguration(builder.Configuration);
 builder.Services.AddSingletonServices();
 builder.Services.AddValidators();
 
-
 var app = builder.Build();
 
 app.AddSwaggerConfiguration();
@@ -36,6 +35,22 @@ app.MapPost("book", async (Book book, IBookService bookService, IValidator<Book>
     }
 
     return Results.Created($"/books/{book.ISBN}", book);
+});
+
+app.MapPut("book/{isbn}", async (string isbn, Book book, IBookService bookService, IValidator<Book> validator) =>
+{
+    book.ISBN = isbn;
+
+    var validationResult = await validator.ValidateAsync(book);
+
+    if (!validationResult.IsValid)
+    {
+        return Results.BadRequest(validationResult.Errors);
+    }
+
+    var updated = await bookService.UpdateAsync(book);
+
+    return updated ? Results.Ok(book) : Results.NotFound();
 });
 
 app.MapGet("books", async (IBookService bookService, string? searchTerm) =>
