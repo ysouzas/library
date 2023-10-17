@@ -1,12 +1,16 @@
 using FluentValidation;
+using Library.Api.Auth;
 using Library.Api.Configurations;
 using Library.Api.Model;
 using Library.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddAuthentication();
 builder.Services.AddBuilderServices();
 builder.Services.AddDatabaseConfiguration(builder.Configuration);
 builder.Services.AddSingletonServices();
@@ -15,10 +19,11 @@ builder.Services.AddValidators();
 var app = builder.Build();
 
 app.AddSwaggerConfiguration();
+app.AddAuthorizationConfiguration();
 
 await app.AddDatabaseInitializerAysnc();
 
-app.MapPost("book", async (Book book, IBookService bookService, IValidator<Book> validator) =>
+app.MapPost("book", [Authorize(AuthenticationSchemes = ApiKeySchemeConstants.SchemeName)] async (Book book, IBookService bookService, IValidator<Book> validator) =>
 {
     var validationResult = await validator.ValidateAsync(book);
 

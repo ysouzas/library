@@ -22,4 +22,11 @@ public static class AppConfigurations
 
         return app;
     }
+
+    public static WebApplication AddAuthorizationConfiguration(this WebApplication app)
+    {
+        app.UseAuthorization();
+
+        return app;
+    }
 }
