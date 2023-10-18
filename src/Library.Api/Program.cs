@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Net.Mime;
 using FluentValidation;
+using FluentValidation.Results;
 using Library.Api.Auth;
 using Library.Api.Configurations;
 using Library.Api.Model;
@@ -40,7 +43,10 @@ app.MapPost("book", [Authorize(AuthenticationSchemes = ApiKeySchemeConstants.Sch
     }
 
     return Results.CreatedAtRoute("GetBook", new { isbn = book.ISBN }, book);
-});
+})
+.Accepts<Book>(MediaTypeNames.Application.Json)
+.Produces<Book>(StatusCodes.Status201Created)
+.Produces<IEnumerable<ValidationFailure>>(StatusCodes.Status400BadRequest);
 
 app.MapPut("book/{isbn}", async (string isbn, Book book, IBookService bookService, IValidator<Book> validator) =>
 {
@@ -56,7 +62,11 @@ app.MapPut("book/{isbn}", async (string isbn, Book book, IBookService bookServic
     var updated = await bookService.UpdateAsync(book);
 
     return updated ? Results.Ok(book) : Results.NotFound();
-});
+})
+.WithName("UpdateBook")
+.Accepts<Book>(MediaTypeNames.Application.Json)
+.Produces<Book>(StatusCodes.Status200OK)
+.Produces<IEnumerable<ValidationFailure>>(StatusCodes.Status400BadRequest);
 
 app.MapGet("books", async (IBookService bookService, string? searchTerm) =>
 {
@@ -70,20 +80,28 @@ app.MapGet("books", async (IBookService bookService, string? searchTerm) =>
     var books = await bookService.GetAllAsync();
 
     return Results.Ok(books);
-}).WithName("GetBook");
+})
+.WithName("GetBooks")
+.Produces<IEnumerable<Book>>(StatusCodes.Status200OK)
+.Produces<IEnumerable<ValidationFailure>>(StatusCodes.Status400BadRequest);
 
 app.MapGet("books/{isbn}", async (string isbn, IBookService bookService) =>
 {
     var book = await bookService.GetByISBNAsync(isbn);
 
     return book is not null ? Results.Ok(book) : Results.NotFound();
-});
+})
+.WithName("GetBook")
+.Produces<Book>(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status400BadRequest);
 
 app.MapDelete("books/{isbn}", async (string isbn, IBookService bookService) =>
 {
     var deleted = await bookService.DeleteAsync(isbn);
 
     return deleted ? Results.NoContent() : Results.NotFound();
-});
+})
+.Produces(StatusCodes.Status204NoContent)
+.Produces(StatusCodes.Status404NotFound);
 
 app.Run();
