@@ -39,7 +39,7 @@ app.MapPost("book", [Authorize(AuthenticationSchemes = ApiKeySchemeConstants.Sch
         return Results.BadRequest(new { errorMessage = "A book with this ISBN-13 already exist" });
     }
 
-    return Results.Created($"/books/{book.ISBN}", book);
+    return Results.CreatedAtRoute("GetBook", new { isbn = book.ISBN }, book);
 });
 
 app.MapPut("book/{isbn}", async (string isbn, Book book, IBookService bookService, IValidator<Book> validator) =>
@@ -70,7 +70,7 @@ app.MapGet("books", async (IBookService bookService, string? searchTerm) =>
     var books = await bookService.GetAllAsync();
 
     return Results.Ok(books);
-});
+}).WithName("GetBook");
 
 app.MapGet("books/{isbn}", async (string isbn, IBookService bookService) =>
 {
