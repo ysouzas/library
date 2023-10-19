@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.AddJsonOptions();
 builder.Services.AddAuthentication();
 builder.Services.AddBuilderServices();
 builder.Services.AddDatabaseConfiguration(builder.Configuration);
