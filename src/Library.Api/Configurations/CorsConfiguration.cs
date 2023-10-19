@@ -15,11 +15,10 @@ public static class CorsConfiguration
         return services;
     }
 
-    public static WebApplication AddUseCors(this WebApplication app)
+    public static IApplicationBuilder AddUseCors(this WebApplication app)
     {
         app.UseCors();
 
         return app;
     }
-
 }

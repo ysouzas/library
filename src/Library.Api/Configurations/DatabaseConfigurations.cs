@@ -1,4 +1,6 @@
-﻿using Library.Api.Data;
+﻿using System.Threading.Tasks;
+using Library.Api.Data;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,7 +8,7 @@ namespace Library.Api.Configurations;
 
 public static class DatabaseConfigurations
 {
-    public static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services, ConfigurationManager configuration)
+    public static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetValue<string>("Database:ConnectionString");
 
@@ -16,5 +18,13 @@ public static class DatabaseConfigurations
         services.AddSingleton<DatabaseInitializer>();
 
         return services;
+    }
+
+    public static async Task<IApplicationBuilder> AddDatabaseInitializerAysnc(this WebApplication app)
+    {
+        var databaseInitializer = app.Services.GetRequiredService<DatabaseInitializer>();
+        await databaseInitializer.InitializeAsync();
+
+        return app;
     }
 }

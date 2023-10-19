@@ -1,13 +1,10 @@
-﻿using System.Threading.Tasks;
-using Library.Api.Data;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Builder;
 
 namespace Library.Api.Configurations;
 
 public static class AppConfigurations
 {
-    public static WebApplication AddSwaggerConfiguration(this WebApplication app)
+    public static IApplicationBuilder AddSwaggerConfiguration(this WebApplication app)
     {
         app.UseSwagger();
         app.UseSwaggerUI();
@@ -15,15 +12,7 @@ public static class AppConfigurations
         return app;
     }
 
-    public static async Task<WebApplication> AddDatabaseInitializerAysnc(this WebApplication app)
-    {
-        var databaseInitializer = app.Services.GetRequiredService<DatabaseInitializer>();
-        await databaseInitializer.InitializeAsync();
-
-        return app;
-    }
-
-    public static WebApplication AddAuthorizationConfiguration(this WebApplication app)
+    public static IApplicationBuilder AddAuthorizationConfiguration(this IApplicationBuilder app)
     {
         app.UseAuthorization();
 
