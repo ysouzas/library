@@ -9,10 +9,12 @@ using Library.Api.Model;
 using Library.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors();
 builder.Services.AddJsonOptions();
 builder.Services.AddAuthentication();
 builder.Services.AddBuilderServices();
@@ -22,6 +24,7 @@ builder.Services.AddValidators();
 
 var app = builder.Build();
 
+app.AddUseCors();
 app.AddSwaggerConfiguration();
 app.AddAuthorizationConfiguration();
 
@@ -107,7 +110,7 @@ app.MapDelete("books/{isbn}", async (string isbn, IBookService bookService) =>
 
 
 
-app.MapGet("status", () =>
+app.MapGet("status", [EnableCors("AnyOrigin")] () =>
 {
     return Results.Extensions.Html(@"<!DOCTYPE html>
 <html>
