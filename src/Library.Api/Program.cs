@@ -4,6 +4,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using Library.Api.Auth;
 using Library.Api.Configurations;
+using Library.Api.Helpers.Extensions;
 using Library.Api.Model;
 using Library.Api.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -103,5 +104,33 @@ app.MapDelete("books/{isbn}", async (string isbn, IBookService bookService) =>
 })
 .Produces(StatusCodes.Status204NoContent)
 .Produces(StatusCodes.Status404NotFound);
+
+
+
+app.MapGet("status", () =>
+{
+    return Results.Extensions.Html(@"<!DOCTYPE html>
+<html>
+<head>
+    <title>Status Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #status {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Status</h1>
+    <div>Working</div>
+</body>
+</html>
+");
+})
+.Produces(StatusCodes.Status204NoContent)
+.Produces(StatusCodes.Status404NotFound);
+
 
 app.Run();
